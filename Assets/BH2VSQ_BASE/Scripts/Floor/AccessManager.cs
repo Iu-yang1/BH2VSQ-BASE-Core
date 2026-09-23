@@ -11,6 +11,13 @@ namespace BH2VSQ.Base
 
         public AccessResult CheckPointAccess(TeleportPoint point)
         {
+            return CheckPointAccess(point, false);
+        }
+
+        // Accepted invitations bypass only the destination rank gate.
+        // Reserved / maintenance floor state remains enforced for the invited player.
+        public AccessResult CheckPointAccess(TeleportPoint point, bool bypassRank)
+        {
             if (!Utilities.IsValid(Networking.LocalPlayer))
                 return AccessResult.InvalidPlayer;
 
@@ -24,11 +31,8 @@ namespace BH2VSQ.Base
 
             // Explicit hierarchical permission:
             // Admin   >= Member >= Visitor
-            //
-            // Admin   can enter Admin / Member / Visitor points.
-            // Member  can enter Member / Visitor points.
-            // Visitor can enter Visitor points only.
-            if (!HasRequiredRank(playerRank, point.requiredRank))
+            // An accepted invitation can bypass this rank gate.
+            if (!bypassRank && !HasRequiredRank(playerRank, point.requiredRank))
                 return AccessResult.InsufficientRank;
 
             // Admin bypasses reserved / maintenance restrictions.

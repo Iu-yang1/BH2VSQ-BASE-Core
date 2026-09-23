@@ -6,6 +6,7 @@
 
 1. 导入资源包，在已有 VRChat 世界场景中放入一个核心实例；确保场景只有一个有效 `EventSystem`。核心自带一个，旧场景若已有一个，请禁用或移除重复的实例。
 2. 将核心 `Teleport/Point_*` 放到实际房间，设置中文地点/楼层名、权限、目的地和 `AreaTrigger/BoxCollider`。碰撞体应覆盖玩家能行走的实际区域；未覆盖处显示“未知”。新增地点时在同一 `Teleport` 子节点复制 `BH2VSQ_TeleportPoint.prefab`，设置唯一 `locationId`，无需修改代码。重叠区域优先取较小体积。
+   需要物理/视觉屏障时，推荐在核心 `Floor/BH2VSQ_FloorController` 下放置 `Floor/BH2VSQ_FloorBarrier.prefab`，只设置 `barrierFloorId`（楼层 ID）；无需配置隐藏的 `barrierController` 开关，再把自定义屏障主体直接拖成该父对象的子节点。屏障会自动从所在核心层级寻找 `TeleportManager`，不需要再手动连接传送管理器。楼层开放时所有子节点自动隐藏，包场或维护时自动显示；同楼层多个点不需要重复绑定。正常 `FloorManager` 会自动刷新其直接子节点中的屏障控制器，网络同步后的状态变化也会更新屏障。
 3. 在核心根节点 Inspector 设置 `BaseWorldSystem.menuOpacity`（0～1）。桌面端**按住 Tab 显示、松开隐藏**；VR 玩家可通过世界交互按钮调用 `BaseWorldSystem.ToggleMenu`。核心的 `returnUnauthorizedPlayersToSafePoint` 默认关闭；若要自动传回，请先指定唯一游客可达的 `isSafeFallback` 点再开启。
 4. 仅在场景实例的 `Authentication/TOTPAuthManager` 填成员和管理员 Base32 密钥。验证配置，随后在 ClientSim 检查 UI，并用多客户端检查同步。不要把世界内密钥用于真实身份或付费权限。
 
@@ -32,9 +33,10 @@
 | --- | --- | --- |
 | `Core/BH2VSQ_BASE_Core.prefab` | 完整系统，含所有管理器、UI 和初始点 | 正式场景只放一个，配置点位、密钥、出生点及 EventSystem。 |
 | `Demo/BH2VSQ_DemoBase.prefab` | 演示核心副本 | 只用于检查；不要与正式核心并存。 |
-| `Teleport/BH2VSQ_TeleportPoint.prefab` | 一个传送目的地和区域 | 放在核心 `Teleport` 下，设置 ID、中文名称、楼层、等级、目的地与碰撞体。 |
+| `Teleport/BH2VSQ_TeleportPoint.prefab` | 一个传送目的地和区域 | 放在核心 `Teleport` 下，设置 ID、中文名称、楼层、等级、目的地与碰撞体；楼层屏障请使用 `Floor/BH2VSQ_FloorBarrier.prefab`。 |
 | `Floor/BH2VSQ_AreaTrigger.prefab` | 进入区域时记录位置；可选无权限自动传回 | 放在对应点下，保持 `BoxCollider.isTrigger`，连接 `point`、`tracker`、`access`、`teleport`、`world`；点预制体已自带一个。 |
-| `Floor/BH2VSQ_FloorController.prefab` | 按点汇总楼层及状态 | 连接 `TeleportManager`，不要与原有实例并存。 |
+| `Floor/BH2VSQ_FloorController.prefab` | 按点汇总楼层及状态 | 连接 `TeleportManager`，不要与原有实例并存。屏障预制件应放在它的子节点下。 |
+| `Floor/BH2VSQ_FloorBarrier.prefab` | 楼层包场/维护屏障父对象 | 只设置 `barrierFloorId`；无需配置隐藏的 `barrierController` 开关。把自定义屏障主体直接作为子对象放入。父对象应放在普通 `BH2VSQ_FloorController` / `FloorManager` 对象的子层级中。屏障父对象本身始终保持 Active，只切换其直接子对象。该预制件复用 `FloorManager` 的 U# Program Asset，不新增独立 UdonSharp 脚本。 |
 | `Floor/BH2VSQ_AreaController.prefab` | 位置名称与经验倍率查询 | 连接 `TeleportManager`。 |
 | `UI/BH2VSQ_TabMenu.prefab` | 顶部资料卡及四个标签页 | 放入带 `VRCUiShape`、`BoxCollider`、`GraphicRaycaster` 的 World Space Canvas，连接页、权限、按钮与高亮图标。 |
 | `UI/BH2VSQ_PersonalInfo.prefab` | 顶部玩家资料与经验条 | 连接玩家数据、权限和中文文本；完整核心中始终显示于菜单顶部。 |
@@ -55,3 +57,11 @@
 - **位置一直未知或人数不更新**：把对应点的区域碰撞体扩展至玩家实际行走的位置，检查碰撞体已启用及点的 ID 唯一。打开菜单后每秒刷新显示。
 - **旧场景仍看到个人页或旧提示**：重新导入新版资源包不会自动改动已放入其他场景的旧实例。先记录旧点位、触发器和密钥，再替换为新版核心并重新配置。
 - **单独零件没有反应**：零件没有自动连接完整核心；按上表接回引用后运行 **BH2VSQ BASE → 验证配置**。
+
+
+### 楼层状态排除规则
+1F（floorId=1）永久视为“开放”，不会出现在包场/维护管理列表，也不会被管理员切换为包场或维护；因此 1F 不需要配置屏障。
+
+### 导入后编译一次
+
+本项目包含修改后的 UdonSharp 源码。导入或替换资源后，请执行 `Tools → BH2VSQ BASE → Recompile UdonSharp Programs`，让 `FloorManager` 的 U# Program Asset 与最新源码同步。UdonSharp 官方文档也说明可以开启自动编译或全量编译脚本。

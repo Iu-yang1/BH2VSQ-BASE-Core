@@ -376,6 +376,7 @@ MonoBehaviour:
   radioDutyArea: 0
   xpMultiplier: 0.5
   destination: {fileID: 4642631467057513070}
+  floorBarrierRoot: {fileID: 0}
   floorState: 0
 --- !u!114 &2456645921058993325
 MonoBehaviour:

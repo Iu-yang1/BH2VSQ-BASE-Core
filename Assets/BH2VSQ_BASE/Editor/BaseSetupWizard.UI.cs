@@ -372,10 +372,36 @@ namespace BH2VSQ.Base.Editor
             SavePart(core, "UI/MainCanvas/TabMenu/AdminPanel", ui + "BH2VSQ_AdminPanel.prefab");
             SavePart(core, "UI/MainCanvas/TabMenu/AdminPanel/FloorAdmin", ui + "BH2VSQ_FloorAdmin.prefab");
             SavePart(core, "Floor/FloorManager", Root + "/Prefabs/Floor/BH2VSQ_FloorController.prefab");
+            CreateFloorBarrierPrefab(core);
             SavePart(core, "Floor/AreaManager", Root + "/Prefabs/Floor/BH2VSQ_AreaController.prefab");
             SavePart(core, "Teleport/Point_1F_Living", Root + "/Prefabs/Teleport/BH2VSQ_TeleportPoint.prefab");
             SavePart(core, "Teleport/Point_1F_Living/AreaTrigger", Root + "/Prefabs/Floor/BH2VSQ_AreaTrigger.prefab");
             PrefabUtility.SaveAsPrefabAsset(core, Root + "/Prefabs/Demo/BH2VSQ_DemoBase.prefab");
+        }
+
+
+        private static void CreateFloorBarrierPrefab(GameObject core)
+        {
+            string destination = Root + "/Prefabs/Floor/BH2VSQ_FloorBarrier.prefab";
+            Transform source = core.transform.Find("Floor/FloorManager");
+            if (source == null) throw new InvalidOperationException("Missing floor manager source for barrier prefab");
+
+            GameObject clone = UnityEngine.Object.Instantiate(source.gameObject);
+            clone.name = "BH2VSQ_FloorBarrier";
+            clone.transform.SetParent(null, false);
+            clone.SetActive(true);
+
+            FloorManager floor = clone.GetComponent<FloorManager>();
+            if (floor == null) throw new InvalidOperationException("Floor manager component missing on barrier prefab source");
+            floor.teleport = null;
+            floor.barrierController = true;
+            floor.barrierFloorId = 1;
+
+            foreach (UdonSharpBehaviour behaviour in clone.GetComponentsInChildren<UdonSharpBehaviour>(true))
+                EditorUtility.SetDirty(behaviour);
+
+            PrefabUtility.SaveAsPrefabAsset(clone, destination);
+            UnityEngine.Object.DestroyImmediate(clone);
         }
 
         private static void SavePart(GameObject core, string path, string destination)

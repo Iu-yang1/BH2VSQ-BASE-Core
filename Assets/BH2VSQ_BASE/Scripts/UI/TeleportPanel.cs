@@ -73,12 +73,23 @@ namespace BH2VSQ.Base
 
         public void ToLocation(int id)
         {
-            SetFeedback(teleport != null && teleport.ToLocation(id));
+            if (teleport == null)
+            {
+                SetFeedback(AccessResult.InvalidArea);
+                return;
+            }
+            teleport.ToLocation(id);
+            SetFeedback(teleport.lastResult);
         }
 
-        private void SetFeedback(bool ok)
+        private void SetFeedback(AccessResult result)
         {
-            if (feedback != null && localization != null) feedback.text = localization.Get(ok ? BaseText.Teleporting : BaseText.AccessDenied);
+            if (feedback == null || localization == null) return;
+            if (result == AccessResult.Allowed) feedback.text = localization.Get(BaseText.Teleporting);
+            else if (result == AccessResult.InsufficientRank) feedback.text = localization.Get(BaseText.NoPermission);
+            else if (result == AccessResult.FloorReserved) feedback.text = localization.Get(BaseText.FloorReserved);
+            else if (result == AccessResult.FloorMaintenance) feedback.text = localization.Get(BaseText.FloorMaintenance);
+            else feedback.text = localization.Get(BaseText.AccessDenied);
         }
     }
 }

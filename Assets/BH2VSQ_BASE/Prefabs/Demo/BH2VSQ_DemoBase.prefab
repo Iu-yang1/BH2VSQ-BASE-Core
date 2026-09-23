@@ -11682,6 +11682,9 @@ MonoBehaviour:
   - "\u6B63\u5728\u4F20\u9001"
   - "\u8BA4\u8BC1\u6210\u529F"
   - "\u9A8C\u8BC1\u7801\u65E0\u6548"
+  - "\u65E0\u6743\u9650"
+  - "\u697C\u5C42\u5305\u573A"
+  - "\u697C\u5C42\u7EF4\u62A4\u4E2D"
 --- !u!114 &4659749883723472533
 MonoBehaviour:
   m_ObjectHideFlags: 0

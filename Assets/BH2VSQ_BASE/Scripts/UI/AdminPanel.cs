@@ -54,8 +54,9 @@ namespace BH2VSQ.Base
         private void RefreshFloorButtons()
         {
             if (floors == null || floorObjects == null || floorObjects.Length == 0) return;
-            int count = floors.UniqueFloorCount();
-            if (count > 0 && !floors.Valid(selectedFloor)) selectedFloor = floors.FloorIdAt(0);
+            int count = floors.ManageableFloorCount();
+            if (count > 0 && !floors.IsGuestFloor(selectedFloor)) selectedFloor = floors.ManageableFloorIdAt(0);
+            if (count == 0) selectedFloor = BaseConstants.InvalidId;
             int pages = (count + floorObjects.Length - 1) / floorObjects.Length;
             if (floorPage >= pages) floorPage = pages > 0 ? pages - 1 : 0;
             for (int i = 0; i < floorObjects.Length; i++)
@@ -64,9 +65,9 @@ namespace BH2VSQ.Base
                 bool visible = position < count;
                 floorObjects[i].SetActive(visible);
                 if (!visible) continue;
-                int floorId = floors.FloorIdAt(position);
+                int floorId = floors.ManageableFloorIdAt(position);
                 floorActions[i].value = floorId;
-                floorLabels[i].text = floors.GetFloor(floorId, localization.Language());
+                floorLabels[i].text = floors.GetFloor(floorId, localization.Language()) + " · " + localization.StateName(floors.GetState(floorId));
             }
             if (previousFloorButton != null) previousFloorButton.SetActive(floorPage > 0);
             if (nextFloorButton != null) nextFloorButton.SetActive(floorPage + 1 < pages);
@@ -87,7 +88,8 @@ namespace BH2VSQ.Base
 
         public void ApplyFloorState()
         {
-            if (floorAdmin != null) floorAdmin.SetFloor(selectedFloor, selectedState);
+            if (floorAdmin != null && floors != null && floors.IsGuestFloor(selectedFloor))
+                floorAdmin.SetFloor(selectedFloor, selectedState);
             Refresh();
         }
     }

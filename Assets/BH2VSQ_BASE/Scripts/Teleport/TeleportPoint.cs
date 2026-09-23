@@ -19,6 +19,7 @@ namespace BH2VSQ.Base
         public bool radioDutyArea;
         public float xpMultiplier = 1f;
         public Transform destination;
+
         [UdonSynced] public int floorState;
 
         public string DisplayName(int language)
@@ -36,10 +37,13 @@ namespace BH2VSQ.Base
 
         public void SetFloorState(FloorState state)
         {
+            // 1F is permanently open and cannot be switched to Reserved/Maintenance.
+            if (floorId == 1) return;
             if (!Utilities.IsValid(Networking.LocalPlayer)) return;
             Networking.SetOwner(Networking.LocalPlayer, gameObject);
             floorState = (int)state;
             RequestSerialization();
         }
+
     }
 }

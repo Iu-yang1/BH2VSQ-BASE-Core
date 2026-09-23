@@ -23,6 +23,9 @@ namespace BH2VSQ.Base
         public const int Teleporting = 18;
         public const int Authenticated = 19;
         public const int InvalidCode = 20;
-        public const int EntryCount = 21;
+        public const int NoPermission = 21;
+        public const int FloorReserved = 22;
+        public const int FloorMaintenance = 23;
+        public const int EntryCount = 24;
     }
 }

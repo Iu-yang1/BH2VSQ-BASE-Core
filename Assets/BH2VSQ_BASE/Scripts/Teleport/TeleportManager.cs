@@ -53,12 +53,28 @@ namespace BH2VSQ.Base
 
         public bool ToPlayer(int playerId)
         {
+            return ToPlayer(playerId, false);
+        }
+
+        // Used by an accepted invitation: bypass the destination player's rank gate
+        // while still enforcing floor state such as reserved or maintenance.
+        public bool ToPlayer(int playerId, bool bypassRank)
+        {
+            lastResult = AccessResult.Allowed;
             VRCPlayerApi target = VRCPlayerApi.GetPlayerById(playerId);
-            if (!Utilities.IsValid(target) || target.isLocal) return false;
+            if (!Utilities.IsValid(Networking.LocalPlayer) || !Utilities.IsValid(target) || target.isLocal)
+            {
+                lastResult = AccessResult.InvalidPlayer;
+                return false;
+            }
             if (tracker != null && access != null)
             {
                 TeleportPoint area = ById(tracker.AreaForPlayer(playerId));
-                if (area != null && access.CheckPointAccess(area) != AccessResult.Allowed) return false;
+                if (area != null)
+                {
+                    lastResult = access.CheckPointAccess(area, bypassRank);
+                    if (lastResult != AccessResult.Allowed) return false;
+                }
             }
             Vector3 position = target.GetPosition();
             Networking.LocalPlayer.TeleportTo(position + target.GetRotation() * Vector3.back, target.GetRotation());

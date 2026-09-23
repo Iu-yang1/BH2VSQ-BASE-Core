@@ -82,8 +82,12 @@ namespace BH2VSQ.Base
                     if (panel != null) panel.ShowNotice("传送请求已同意");
                     if (teleport != null)
                     {
-                        if (requestTypes[i] == 0 && requesterIds[i] == local.playerId) teleport.ToPlayer(targetIds[i]);
-                        if (requestTypes[i] == 1 && targetIds[i] == local.playerId) teleport.ToPlayer(requesterIds[i]);
+                        bool moved = false;
+                        if (requestTypes[i] == 0 && requesterIds[i] == local.playerId)
+                            moved = teleport.ToPlayer(targetIds[i]);
+                        if (requestTypes[i] == 1 && targetIds[i] == local.playerId)
+                            moved = teleport.ToPlayer(requesterIds[i], true);
+                        if (!moved && panel != null) panel.ShowAccessResult(teleport.lastResult);
                     }
                 }
                 else if (state == 3 && panel != null) panel.ShowNotice("传送请求已拒绝");

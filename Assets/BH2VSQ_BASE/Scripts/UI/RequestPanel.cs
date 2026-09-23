@@ -41,6 +41,15 @@ namespace BH2VSQ.Base
             noticeHideAt = Time.time + 5f;
         }
 
+        public void ShowAccessResult(AccessResult result)
+        {
+            if (localization == null) return;
+            if (result == AccessResult.InsufficientRank) ShowNotice(localization.Get(BaseText.NoPermission));
+            else if (result == AccessResult.FloorReserved) ShowNotice(localization.Get(BaseText.FloorReserved));
+            else if (result == AccessResult.FloorMaintenance) ShowNotice(localization.Get(BaseText.FloorMaintenance));
+            else if (result != AccessResult.Allowed) ShowNotice(localization.Get(BaseText.AccessDenied));
+        }
+
         public void Refresh()
         {
             if (requests == null || rowObjects == null || !Utilities.IsValid(Networking.LocalPlayer)) return;
