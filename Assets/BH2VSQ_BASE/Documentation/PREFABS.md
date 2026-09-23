@@ -42,7 +42,7 @@
 | `UI/BH2VSQ_PersonalInfo.prefab` | 顶部玩家资料与经验条 | 连接玩家数据、权限和中文文本；完整核心中始终显示于菜单顶部。 |
 | `UI/BH2VSQ_PermissionLogin.prefab` | 六位 TOTP 输入和确认按钮 | 连接 `TOTPAuthManager`、菜单和请求提示服务。 |
 | `UI/BH2VSQ_Teleport.prefab` | 直接传送、人数及当前位置高亮 | 连接 `TeleportManager`、`PlayerAreaTracker`、`AreaPopulationManager`。 |
-| `UI/BH2VSQ_PlayerList.prefab` | 自动更新的玩家列表和右侧详情 | 连接登记、位置、玩家数据、详情及中文文本。 |
+| `UI/BH2VSQ_PlayerList.prefab` | 分页复用 5 行的玩家列表和右侧详情 | 连接登记、位置、玩家数据、详情及中文文本；避免为 80 人预建 80 个 Udon 按钮。 |
 | `UI/BH2VSQ_PlayerListItem.prefab` | 玩家列表的行按钮 | 由玩家列表复用，`UIButtonAction` 连接详情并设置玩家 ID。 |
 | `UI/BH2VSQ_PlayerDetail.prefab` | 选中玩家的位置、等级及两个申请按钮 | 连接玩家登记、位置与 `TeleportRequestManager`。 |
 | `UI/BH2VSQ_TeleportRequest.prefab` | 申请列表页面 | 与 `RequestPanel`、请求管理器和申请按钮池连接；完整核心已接好。 |
@@ -54,7 +54,7 @@
 
 - **按住 Tab 无显示**：检查核心 `BaseWorldSystem`、`menuCanvas`、`menuFollower` 引用及游戏窗口焦点。松开 Tab 后菜单消失是预期行为。
 - **按钮无法点击**：主菜单 Canvas 需要 `VRCUiShape`、`BoxCollider`、`GraphicRaycaster`，位于 Default 图层；场景仅留一个有效 `EventSystem`，并检查玩家与菜单之间有无实体碰撞体遮挡。
-- **位置一直未知或人数不更新**：把对应点的区域碰撞体扩展至玩家实际行走的位置，检查碰撞体已启用及点的 ID 唯一。打开菜单后每秒刷新显示。
+- **位置一直未知或人数不更新**：把对应点的区域碰撞体扩展至玩家实际行走的位置，检查 `TeleportPoint.areaVolume` 已连接、碰撞体已启用及点的 ID 唯一。打开菜单后每 2 秒刷新显示。
 - **旧场景仍看到个人页或旧提示**：重新导入新版资源包不会自动改动已放入其他场景的旧实例。先记录旧点位、触发器和密钥，再替换为新版核心并重新配置。
 - **单独零件没有反应**：零件没有自动连接完整核心；按上表接回引用后运行 **BH2VSQ BASE → 验证配置**。
 

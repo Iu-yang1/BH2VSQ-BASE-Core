@@ -22,6 +22,7 @@ namespace BH2VSQ.Base
         public Image[] tabIndicators;
         public TMP_Text[] tabLabels;
         private int currentTab;
+        private int appliedTab = -1;
 
         public void Refresh() { RefreshVisible(); }
         public void RefreshVisible()
@@ -29,7 +30,7 @@ namespace BH2VSQ.Base
             bool isAdmin = permission != null && permission.IsAdmin();
             if (adminTab != null) adminTab.SetActive(isAdmin);
             if (currentTab == 3 && !isAdmin) currentTab = 0;
-            Show(currentTab);
+            if (appliedTab != currentTab) Show(currentTab);
             if (header != null) header.Refresh();
             if (currentTab == 0 && teleportPanel != null) teleportPanel.Refresh();
             if (currentTab == 1 && playerPanel != null) playerPanel.Refresh();
@@ -44,6 +45,8 @@ namespace BH2VSQ.Base
         private void Show(int tab)
         {
             currentTab = tab;
+            if (appliedTab == tab) return;
+            appliedTab = tab;
             if (teleport != null) teleport.SetActive(tab == 0);
             if (players != null) players.SetActive(tab == 1);
             if (requests != null) requests.SetActive(tab == 2);

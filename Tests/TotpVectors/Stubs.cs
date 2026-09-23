@@ -6,6 +6,11 @@ namespace UdonSharp
 namespace UnityEngine
 {
     public class SerializeField : System.Attribute { }
+    public static class Debug
+    {
+        public static void Log(string message) { }
+        public static void LogError(string message) { }
+    }
 }
 
 namespace VRC.SDKBase
@@ -23,6 +28,12 @@ namespace BH2VSQ.Base
     public class AuthenticationSession
     {
         public BaseRank rank;
+        public long authenticatedTicks;
+        public PlayerRegistry registry;
         public void Authenticate(BaseRank value) => rank = value;
+    }
+    public class PlayerRegistry
+    {
+        public void PublishRank(BaseRank rank) { }
     }
 }

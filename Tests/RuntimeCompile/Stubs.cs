@@ -22,9 +22,13 @@ namespace UnityEngine
     public static class Input { public static bool GetKeyDown(KeyCode key) => false; public static bool GetKey(KeyCode key) => false; }
     public class Transform : Component
     {
+        public Transform parent;
+        public Transform root => this;
+        public int childCount;
         public Vector3 position;
         public Quaternion rotation;
         public Vector3 InverseTransformPoint(Vector3 position) => default;
+        public Transform GetChild(int index) => null;
     }
     public struct Vector3
     {
@@ -49,7 +53,7 @@ namespace UnityEngine
         public static float Clamp01(float value) => Math.Clamp(value, 0, 1);
         public static float Abs(float value) => Math.Abs(value);
     }
-    public static class Debug { public static void LogError(string message) { } }
+    public static class Debug { public static void Log(string message) { } public static void LogError(string message) { } }
     public class AudioClip : Object { }
     public class AudioSource : Behaviour
     {
@@ -60,6 +64,7 @@ namespace UnityEngine
     public class CreateAssetMenuAttribute : Attribute { public string menuName; }
     public class MinAttribute : Attribute { public MinAttribute(float value) { } }
     public class RangeAttribute : Attribute { public RangeAttribute(float min, float max) { } }
+    public class HideInInspectorAttribute : Attribute { }
     public class SerializeField : Attribute { }
 }
 

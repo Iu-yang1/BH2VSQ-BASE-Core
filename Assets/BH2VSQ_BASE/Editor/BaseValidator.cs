@@ -46,6 +46,7 @@ namespace BH2VSQ.Base.Editor
             TeleportManager teleport = root.GetComponentInChildren<TeleportManager>(true);
             TabMenuController menu = root.GetComponentInChildren<TabMenuController>(true);
             TeleportPanel panel = root.GetComponentInChildren<TeleportPanel>(true);
+            PlayerListPanel playerPanel = root.GetComponentInChildren<PlayerListPanel>(true);
             AdminPanel admin = root.GetComponentInChildren<AdminPanel>(true);
             RequestPanel requestPanel = root.GetComponentInChildren<RequestPanel>(true);
             TeleportRequestManager requests = root.GetComponentInChildren<TeleportRequestManager>(true);
@@ -96,6 +97,7 @@ namespace BH2VSQ.Base.Editor
                     {
                         BoxCollider collider = trigger.GetComponent<BoxCollider>();
                         if (collider == null || !collider.isTrigger) errors.Add("区域触发器的 BoxCollider 未设为 Trigger：" + point.name);
+                        else if (point.areaVolume != collider) errors.Add("传送点未缓存对应的区域碰撞体：" + point.name);
                     }
                 }
                 if (safeCount > 1 || (world != null && world.returnUnauthorizedPlayersToSafePoint && safeCount != 1)) errors.Add("自动回退开启时必须且只能有一个安全传送点，当前数量：" + safeCount);
@@ -126,8 +128,12 @@ namespace BH2VSQ.Base.Editor
             }
             if (!EditorUtility.IsPersistent(root) && UnityEngine.Object.FindObjectsOfType<EventSystem>().Length != 1)
                 errors.Add("场景需要且仅能有一个有效 EventSystem。");
-            if (panel == null || panel.locationObjects == null || panel.locationActions == null || panel.locationLabels == null || panel.locationObjects.Length == 0 || panel.locationObjects.Length != panel.locationActions.Length || panel.locationObjects.Length != panel.locationLabels.Length)
+            if (panel == null || panel.locationObjects == null || panel.locationActions == null || panel.locationLabels == null || panel.locationBackgrounds == null || panel.locationObjects.Length == 0 || panel.locationObjects.Length != panel.locationActions.Length || panel.locationObjects.Length != panel.locationLabels.Length || panel.locationObjects.Length != panel.locationBackgrounds.Length)
                 errors.Add("地点菜单按钮池不完整。");
+            if (playerPanel == null || playerPanel.rowObjects == null || playerPanel.rowActions == null || playerPanel.rowTexts == null ||
+                playerPanel.rowObjects.Length != BaseConstants.PlayerRowsPerPage || playerPanel.rowActions.Length != playerPanel.rowObjects.Length || playerPanel.rowTexts.Length != playerPanel.rowObjects.Length ||
+                playerPanel.previousButton == null || playerPanel.nextButton == null || playerPanel.pageText == null)
+                errors.Add("玩家列表分页按钮池不完整或仍在一次性创建全部玩家行。");
             if (admin == null || admin.floorObjects == null || admin.floorActions == null || admin.floorLabels == null || admin.floorObjects.Length == 0 || admin.floorObjects.Length != admin.floorActions.Length || admin.floorObjects.Length != admin.floorLabels.Length)
                 errors.Add("楼层管理按钮池不完整。");
             if (requests == null || requestPanel == null || requests.panel != requestPanel || requestPanel.noticeRoot == null || requestPanel.rowObjects == null || requestPanel.rowObjects.Length == 0 ||

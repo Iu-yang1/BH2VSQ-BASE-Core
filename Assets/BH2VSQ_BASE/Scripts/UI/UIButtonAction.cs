@@ -26,6 +26,8 @@ namespace BH2VSQ.Base
             else if (action == 26 && teleport != null) teleport.PreviousPage();
             else if (action == 27 && teleport != null) teleport.NextPage();
             else if (action == 31 && detail != null) detail.ShowPlayer(value);
+            else if (action == 33 && players != null) players.PreviousPage();
+            else if (action == 34 && players != null) players.NextPage();
             else if (action == 32 && detail != null && requests != null)
             {
                 if (!requests.Send(detail.selectedPlayerId, value) && requestPanel != null) requestPanel.ShowNotice("请求发送失败或已有相同申请");

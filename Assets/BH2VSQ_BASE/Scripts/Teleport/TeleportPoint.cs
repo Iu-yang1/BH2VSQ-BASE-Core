@@ -19,7 +19,7 @@ namespace BH2VSQ.Base
         public bool radioDutyArea;
         public float xpMultiplier = 1f;
         public Transform destination;
-
+        public BoxCollider areaVolume;
         [UdonSynced] public int floorState;
 
         public string DisplayName(int language)

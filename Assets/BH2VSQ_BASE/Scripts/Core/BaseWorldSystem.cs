@@ -43,7 +43,7 @@ namespace BH2VSQ.Base
             if (menuCanvas != null && menuCanvas.activeSelf != visible) SetMenuVisible(visible);
             if (visible && Time.time >= nextUiRefresh)
             {
-                nextUiRefresh = Time.time + 1f;
+                nextUiRefresh = Time.time + 2f;
                 if (menu != null) menu.RefreshVisible();
             }
         }
@@ -61,7 +61,7 @@ namespace BH2VSQ.Base
             if (!show) return;
             if (menuFollower != null) menuFollower.Place();
             if (menu != null) menu.RefreshVisible();
-            nextUiRefresh = Time.time + 1f;
+            nextUiRefresh = Time.time + 2f;
         }
 
         public override void OnPlayerJoined(VRCPlayerApi player)

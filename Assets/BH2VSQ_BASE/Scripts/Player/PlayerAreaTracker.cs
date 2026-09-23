@@ -32,8 +32,7 @@ namespace BH2VSQ.Base
                     {
                         TeleportPoint point = teleport.points[i];
                         if (point == null) continue;
-                        AreaTrigger trigger = point.GetComponentInChildren<AreaTrigger>(true);
-                        BoxCollider box = trigger == null ? null : trigger.GetComponent<BoxCollider>();
+                        BoxCollider box = point.areaVolume;
                         if (box == null || !box.enabled || !box.gameObject.activeInHierarchy) continue;
                         Vector3 local = box.transform.InverseTransformPoint(position) - box.center;
                         Vector3 half = box.size * .5f;
@@ -50,7 +49,7 @@ namespace BH2VSQ.Base
                 }
                 else EnterArea(found.locationId);
             }
-            SendCustomEventDelayedSeconds("PollPosition", .75f);
+            SendCustomEventDelayedSeconds("PollPosition", 1.5f);
         }
 
         public void EnterArea(int areaId)

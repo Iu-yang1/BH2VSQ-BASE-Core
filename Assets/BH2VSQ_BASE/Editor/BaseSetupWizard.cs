@@ -245,6 +245,7 @@ namespace BH2VSQ.Base.Editor
                 GameObject trigger = Group(point.transform, "AreaTrigger");
                 BoxCollider collider = trigger.AddComponent<BoxCollider>();
                 collider.isTrigger = true; collider.size = new Vector3(2f, 2.5f, 2f);
+                point.areaVolume = collider;
                 AreaTrigger areaTrigger = trigger.AddUdonSharpComponent<AreaTrigger>();
                 areaTrigger.tracker = tracker; areaTrigger.access = access; areaTrigger.teleport = teleport; areaTrigger.point = point; areaTrigger.world = world;
             }

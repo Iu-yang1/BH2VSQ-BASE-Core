@@ -13,7 +13,18 @@
 | UI 渲染检查 | 用 Unity 临时渲染并人工检查传送页与申请页：顶部资料卡、右侧输入、区域人数、当前点高亮、标签图标高亮、申请行和绿/红操作按钮布局清楚；临时脚本未打包 |
 | 资源包清单 | 231 个路径条目、17 个预制体；无旧广播、公告、英语切换或临时预览脚本资源 |
 
-正式资源包：`Releases/BH2VSQ_BASE_Core.unitypackage`。SHA-256：`8B6ABAF59EBAAD7CB1C76799D1F2B6943504399797B944E46EE04DEE869C2895`。文件按仓库规则不提交到 Git，将作为 Release 附件发布。
+v0.2.0 正式资源包：`Releases/BH2VSQ_BASE_Core.unitypackage` 当时的 SHA-256 为 `8B6ABAF59EBAAD7CB1C76799D1F2B6943504399797B944E46EE04DEE869C2895`。文件按仓库规则不提交到 Git，以 Release 附件发布。
+
+## 运行时卡顿排查与优化（2026-09-23）
+
+- 玩家列表从一次性创建 80 行改为分页复用 5 行，核心 Prefab 的 `UIButtonAction` Udon 实例从 131 个降至 58 个。
+- 核心 Prefab 从 59,207 行、约 2.04 MB 降至 35,138 行、约 1.21 MB，减少进入世界时的 Udon 初始化和反序列化负担。
+- 区域检测改用 `TeleportPoint.areaVolume` 缓存引用，移除每 0.75 秒对每个位置执行的 `GetComponentInChildren`/`GetComponent`，轮询间隔调整为 1.5 秒。
+- 菜单关闭时不再每秒重建申请列表；申请状态检查间隔调整为 2 秒。通知隐藏改为延迟事件，移除常驻的逐帧 `Update`。
+- 传送点列表只在缓存为空时扫描层级；菜单数据刷新间隔调整为 2 秒，标签页没有切换时不重复执行 `SetActive` 和配色。
+- Unity/UdonSharp 完整构建及静态引用验证通过；语法检查、运行时桩编译、请求流程和 TOTP 测试通过。
+
+优化后的本地资源包 SHA-256：`6425A62F06BB203A8CFC5A7421620B76E74D721865BB060219E0C6F88758543B`。
 
 Unity 日志中仍有 UdonSharp/Odin 在预制体序列化及 SceneTemplate 保存时的非致命 `ArgumentNullException`。构建继续完成、配置验证通过，导出的预制体内容和引用已检查；实际客户端行为仍需验证。
 

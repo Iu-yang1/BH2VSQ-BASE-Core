@@ -197,6 +197,7 @@ namespace BH2VSQ.Base.Editor
             teleportPanel.locationActions = new UIButtonAction[14];
             teleportPanel.locationLabels = new TMP_Text[14];
             teleportPanel.locationObjects = new GameObject[14];
+            teleportPanel.locationBackgrounds = new Image[14];
             for (int i = 0; i < 14; i++)
             {
                 UIButtonAction item = Button(teleportRoot, "LocationItem_" + i, "", 20, 0,
@@ -204,6 +205,7 @@ namespace BH2VSQ.Base.Editor
                 teleportPanel.locationActions[i] = item;
                 teleportPanel.locationLabels[i] = item.GetComponentInChildren<TMP_Text>();
                 teleportPanel.locationObjects[i] = item.gameObject;
+                teleportPanel.locationBackgrounds[i] = item.GetComponent<Image>();
                 item.gameObject.SetActive(false);
             }
             teleportPanel.previousButton = Button(teleportRoot, "PreviousLocations", "上一页", 26, 0, 490, -390, 105, 32).gameObject;
@@ -222,18 +224,18 @@ namespace BH2VSQ.Base.Editor
             playerList.areas = areas;
             playerList.localization = localization;
             playerList.output = Text(playersRoot, "Count", "在线玩家", 20, -10, 790, 33, 21);
-            RectTransform viewport = Panel(playersRoot, "Viewport", 20, -52, 490, 356, new Color(.012f, .08f, .14f));
+            RectTransform viewport = Panel(playersRoot, "Viewport", 20, -52, 490, 300, new Color(.012f, .08f, .14f));
             viewport.gameObject.AddComponent<RectMask2D>();
             ScrollRect scroll = viewport.gameObject.AddComponent<ScrollRect>();
             scroll.horizontal = false;
             scroll.vertical = true;
-            RectTransform content = Rect(viewport, "Content", 0, 0, 470, 80 * 58);
+            RectTransform content = Rect(viewport, "Content", 0, 0, 470, BaseConstants.PlayerRowsPerPage * 58);
             scroll.viewport = viewport;
             scroll.content = content;
-            playerList.rowTexts = new TMP_Text[BaseConstants.MaxPlayers];
-            playerList.rowActions = new UIButtonAction[BaseConstants.MaxPlayers];
-            playerList.rowObjects = new GameObject[BaseConstants.MaxPlayers];
-            for (int i = 0; i < BaseConstants.MaxPlayers; i++)
+            playerList.rowTexts = new TMP_Text[BaseConstants.PlayerRowsPerPage];
+            playerList.rowActions = new UIButtonAction[BaseConstants.PlayerRowsPerPage];
+            playerList.rowObjects = new GameObject[BaseConstants.PlayerRowsPerPage];
+            for (int i = 0; i < BaseConstants.PlayerRowsPerPage; i++)
             {
                 UIButtonAction row = Button(content, "PlayerItem_" + i, "", 31, 0, 2, -i * 58, 460, 54);
                 playerList.rowActions[i] = row;
@@ -242,6 +244,10 @@ namespace BH2VSQ.Base.Editor
                 playerList.rowTexts[i].fontSize = 16;
                 row.gameObject.SetActive(false);
             }
+            playerList.previousButton = Button(playersRoot, "PreviousPlayers", "上一页", 33, 0, 20, -367, 105, 33).gameObject;
+            playerList.pageText = Text(playersRoot, "PlayerPage", "1 / 1", 205, -367, 120, 33, 17);
+            playerList.pageText.alignment = TextAlignmentOptions.Center;
+            playerList.nextButton = Button(playersRoot, "NextPlayers", "下一页", 34, 0, 405, -367, 105, 33).gameObject;
             RectTransform detailRoot = Panel(playersRoot, "PlayerDetail", 525, -52, 310, 356, new Color(.035f, .17f, .27f));
             PlayerDetailPanel detail = detailRoot.gameObject.AddUdonSharpComponent<PlayerDetailPanel>();
             detail.output = Text(detailRoot, "DetailText", "请选择玩家", 12, -12, 286, 155, 19);

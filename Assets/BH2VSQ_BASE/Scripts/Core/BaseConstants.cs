@@ -3,6 +3,7 @@ namespace BH2VSQ.Base
     public static class BaseConstants
     {
         public const int MaxPlayers = 80;
+        public const int PlayerRowsPerPage = 5;
         public const int InvalidId = int.MinValue;
         public const float XpInterval = 30f;
         public const float RequestTimeout = 30f;

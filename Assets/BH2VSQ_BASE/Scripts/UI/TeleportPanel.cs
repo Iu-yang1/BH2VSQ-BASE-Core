@@ -15,6 +15,7 @@ namespace BH2VSQ.Base
         public UIButtonAction[] locationActions;
         public TMP_Text[] locationLabels;
         public GameObject[] locationObjects;
+        public Image[] locationBackgrounds;
         public GameObject previousButton;
         public GameObject nextButton;
         public TMP_Text pageLabel;
@@ -23,7 +24,7 @@ namespace BH2VSQ.Base
         public void Refresh()
         {
             if (teleport == null || locationObjects == null) return;
-            teleport.RefreshPoints();
+            if (teleport.points == null || teleport.points.Length == 0) teleport.RefreshPoints();
             int visible = VisibleCount();
             int size = locationObjects.Length;
             if (size == 0) return;
@@ -38,7 +39,7 @@ namespace BH2VSQ.Base
                 bool current = tracker != null && tracker.localAreaId == point.locationId;
                 int count = population == null ? 0 : population.Count(point.locationId);
                 locationLabels[i].text = point.DisplayName(1) + "  ·  " + count + " 人" + (current ? "  ◆ 当前" : "");
-                Image background = locationObjects[i].GetComponent<Image>();
+                Image background = locationBackgrounds != null && i < locationBackgrounds.Length ? locationBackgrounds[i] : null;
                 if (background != null) background.color = current ? new Color(.06f, .69f, .84f, .96f) : new Color(.02f, .23f, .38f, .83f);
             }
             if (previousButton != null) previousButton.SetActive(page > 0);

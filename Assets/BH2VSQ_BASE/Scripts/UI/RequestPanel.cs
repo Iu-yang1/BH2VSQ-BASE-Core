@@ -28,17 +28,13 @@ namespace BH2VSQ.Base
         private int page;
         private float noticeHideAt;
 
-        private void Update()
-        {
-            if (noticeRoot != null && noticeRoot.activeSelf && Time.time >= noticeHideAt) noticeRoot.SetActive(false);
-        }
-
         public void ShowNotice(string message)
         {
             if (noticeText != null) noticeText.text = message;
             if (noticeRoot != null) noticeRoot.SetActive(true);
             if (noticeFollower != null) noticeFollower.Place();
             noticeHideAt = Time.time + 5f;
+            SendCustomEventDelayedSeconds("HideNotice", 5f);
         }
 
         public void ShowAccessResult(AccessResult result)
@@ -49,6 +45,13 @@ namespace BH2VSQ.Base
             else if (result == AccessResult.FloorMaintenance) ShowNotice(localization.Get(BaseText.FloorMaintenance));
             else if (result != AccessResult.Allowed) ShowNotice(localization.Get(BaseText.AccessDenied));
         }
+
+        public void HideNotice()
+        {
+            if (noticeRoot != null && noticeRoot.activeSelf && Time.time >= noticeHideAt) noticeRoot.SetActive(false);
+        }
+
+        public bool IsVisible() { return root != null && root.activeInHierarchy; }
 
         public void Refresh()
         {

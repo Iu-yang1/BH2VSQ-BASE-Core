@@ -1,4 +1,5 @@
 using UdonSharp;
+using UnityEngine;
 using VRC.SDKBase;
 
 namespace BH2VSQ.Base
@@ -18,6 +19,7 @@ namespace BH2VSQ.Base
             if (access == null) access = world.access;
             if (teleport == null) teleport = world.teleport;
             if (point == null) point = GetComponentInParent<TeleportPoint>();
+            if (point != null && point.areaVolume == null) point.areaVolume = GetComponent<BoxCollider>();
         }
         public override void OnPlayerTriggerEnter(VRCPlayerApi player)
         {

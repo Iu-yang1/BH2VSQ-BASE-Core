@@ -21,12 +21,12 @@ namespace BH2VSQ.Base
         private int[] seenIds = new int[Capacity];
         private int[] seenStates = new int[Capacity];
 
-        private void Start() { SendCustomEventDelayedSeconds("Tick", 1f); }
+        private void Start() { SendCustomEventDelayedSeconds("Tick", 2f); }
 
         public void Tick()
         {
             Refresh();
-            SendCustomEventDelayedSeconds("Tick", 1f);
+            SendCustomEventDelayedSeconds("Tick", 2f);
         }
 
         public bool Send(int playerId, int type)
@@ -64,6 +64,7 @@ namespace BH2VSQ.Base
             VRCPlayerApi local = Networking.LocalPlayer;
             if (!Utilities.IsValid(local)) return;
             long now = Networking.GetNetworkDateTime().Ticks;
+            bool changed = false;
             for (int i = 0; i < Capacity; i++)
             {
                 int id = requestIds[i];
@@ -73,6 +74,7 @@ namespace BH2VSQ.Base
                 if (seenIds[i] == id && seenStates[i] == state) continue;
                 seenIds[i] = id;
                 seenStates[i] = state;
+                changed = true;
                 if (state == 1 && targetIds[i] == local.playerId)
                 {
                     if (panel != null) panel.ShowNotice("收到传送请求 · 按住 Tab 前往请求页处理");
@@ -93,7 +95,7 @@ namespace BH2VSQ.Base
                 else if (state == 3 && panel != null) panel.ShowNotice("传送请求已拒绝");
                 else if (state == 4 && requesterIds[i] == local.playerId && panel != null) panel.ShowNotice("传送请求已过期");
             }
-            if (panel != null) panel.Refresh();
+            if (panel != null && (changed || panel.IsVisible())) panel.Refresh();
         }
 
         public void Accept(int id) { Complete(id, 2); }

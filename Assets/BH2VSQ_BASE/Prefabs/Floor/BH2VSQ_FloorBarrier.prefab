@@ -57,7 +57,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7371391977679011094}
   teleport: {fileID: 0}
   barrierController: 1
-  barrierFloorId: -2147483648
+  barrierFloorId: 1
 --- !u!114 &7371391977679011094
 MonoBehaviour:
   m_ObjectHideFlags: 0
